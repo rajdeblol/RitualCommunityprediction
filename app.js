@@ -106,6 +106,8 @@ const authError = document.getElementById('auth-error');
 const statTotalUsers = document.getElementById('stat-total-users');
 const btnBrowse = document.getElementById('btn-browse');
 const navLeaderboard = document.getElementById('nav-leaderboard');
+const navHome = document.getElementById('nav-home');
+const navBrandLogo = document.getElementById('nav-brand-logo');
 const leaderboardModal = document.getElementById('leaderboard-modal');
 const btnCloseLeaderboard = document.getElementById('btn-close-leaderboard');
 const leaderboardList = document.getElementById('leaderboard-list');
@@ -242,6 +244,8 @@ function bindEvents() {
   // New Events
   btnBrowse.addEventListener('click', openLeaderboard);
   navLeaderboard.addEventListener('click', (e) => { e.preventDefault(); openLeaderboard(); });
+  navHome.addEventListener('click', goHome);
+  navBrandLogo.addEventListener('click', goHome);
   btnCloseLeaderboard.addEventListener('click', () => leaderboardModal.classList.remove('active'));
 
   // Keyboard shortcuts
@@ -518,23 +522,36 @@ async function openLeaderboard() {
     
     if (data.length === 0) {
       leaderboardList.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">No predictions yet. Be the first!</div>';
-      return;
+    } else {
+      leaderboardList.innerHTML = data.map((user, index) => `
+        <div class="lb-row">
+          <div>
+            <span style="color: var(--text-muted); margin-right: 12px;">#${index + 1}</span>
+            <span class="lb-user">${user.username}</span>
+          </div>
+          <div>
+            <span class="lb-score">${user.score} pts</span>
+          </div>
+        </div>
+      `).join('');
     }
-    
-    leaderboardList.innerHTML = data.map((user, i) => `
-      <div class="lb-row">
-        <div>
-          <span style="color: var(--text-muted); margin-right: 12px;">#${i + 1}</span>
-          <span class="lb-user">${user.username}</span>
-        </div>
-        <div>
-          <span class="lb-score">${user.score} pts</span>
-        </div>
-      </div>
-    `).join('');
   } catch (e) {
-    leaderboardList.innerHTML = '<div style="text-align: center; color: var(--no-color); padding: 20px;">Failed to load leaderboard.</div>';
+    leaderboardList.innerHTML = '<div style="text-align: center; color: #ff3366; padding: 20px;">Failed to load leaderboard.</div>';
+    console.error(e);
   }
+}
+
+function goHome(e) {
+  if (e) e.preventDefault();
+  // Hide main app, show intro screen
+  mainApp.style.opacity = '0';
+  mainApp.style.pointerEvents = 'none';
+  
+  setTimeout(() => {
+    introScreen.classList.remove('hidden');
+    // Also close leaderboard if open
+    leaderboardModal.classList.remove('active');
+  }, 300);
 }
 
 function showResults() {
