@@ -489,9 +489,9 @@ async function startGame() {
       body: JSON.stringify({ username })
     });
     
-    if (!res.ok) throw new Error('Network response was not ok');
-    
     const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Network response was not ok');
+    
     state.username = data.username;
     authError.textContent = '';
     
@@ -501,7 +501,7 @@ async function startGame() {
     mainApp.style.transition = 'opacity 0.5s ease';
     
   } catch (e) {
-    authError.textContent = 'Failed to connect. Is the server running?';
+    authError.textContent = e.message || 'Failed to connect. Is the server running?';
     console.error(e);
   } finally {
     btnStart.disabled = false;

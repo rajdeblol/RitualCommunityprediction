@@ -8,6 +8,10 @@ module.exports = async function handler(req, res) {
   const { username } = req.body;
   if (!username) return res.status(400).json({ error: 'Username is required' });
 
+  if (!process.env.POSTGRES_URL && !process.env.DATABASE_URL && !process.env.SUPABASE_DB_URL) {
+    return res.status(500).json({ error: 'Database connection string is missing in Vercel Environment Variables. Please add POSTGRES_URL or DATABASE_URL.' });
+  }
+
   try {
     const result = await db.query(`SELECT * FROM users WHERE username = $1`, [username]);
     
@@ -18,6 +22,6 @@ module.exports = async function handler(req, res) {
       res.json({ username, score: 0, predictions_made: 0 });
     }
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: err.message || 'Internal Server Error' });
   }
 }
