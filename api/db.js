@@ -5,7 +5,7 @@ let pool;
 function getPool() {
   if (!pool) {
     pool = new Pool({
-      connectionString: process.env.POSTGRES_URL,
+      connectionString: process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.SUPABASE_DB_URL,
       // For Vercel Postgres/Neon, SSL is usually required
       ssl: {
         rejectUnauthorized: false
