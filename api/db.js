@@ -10,7 +10,13 @@ function getPool() {
     // This overrides our ssl: { rejectUnauthorized: false } setting in the pg library, causing the certificate chain error.
     // We strip it here to ensure our custom SSL config is respected.
     if (connString) {
-      connString = connString.replace(/[\?&]sslmode=[^&]*/g, '');
+      try {
+        const url = new URL(connString);
+        url.searchParams.delete('sslmode');
+        connString = url.toString();
+      } catch (e) {
+        // Fallback if parsing fails for some reason
+      }
     }
 
     pool = new Pool({
