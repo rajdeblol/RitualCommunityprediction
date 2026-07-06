@@ -4,9 +4,17 @@ let pool;
 
 function getPool() {
   if (!pool) {
+    let connString = process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
+    
+    // Vercel Supabase integration often adds ?sslmode=require to the URL
+    // This overrides our ssl: { rejectUnauthorized: false } setting in the pg library, causing the certificate chain error.
+    // We strip it here to ensure our custom SSL config is respected.
+    if (connString) {
+      connString = connString.replace(/[\?&]sslmode=[^&]*/g, '');
+    }
+
     pool = new Pool({
-      connectionString: process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.SUPABASE_DB_URL,
-      // For Vercel Postgres/Neon, SSL is usually required
+      connectionString: connString,
       ssl: {
         rejectUnauthorized: false
       }
