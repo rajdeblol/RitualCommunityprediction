@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ritual Predict — Discord Prediction Market</title>
+  <meta name="description" content="Swipe to predict Discord community outcomes. A Bumble-style prediction market for the Ritual community.">
+  <meta property="og:title" content="Ritual Predict — Discord Prediction Market">
+  <meta property="og:description" content="Swipe to predict Discord community outcomes.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-canvas" id="bg-canvas">
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <!-- Confetti container -->
+  <div class="confetti-container" id="confetti-container"></div>
+
+  <!-- Top Navigation (Hivemind inspired) -->
+  <nav class="top-nav" id="top-nav">
+    <div class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 189 189" fill="currentColor">
+        <path d="M30.4227 108.445L40.6803 98.1203L48.5666 106.058L30.0682 124.677L0.70482 95.1222L30.0678 65.5677L70.0435 105.804L62.1576 113.741L30.4227 81.7994L30.068 81.4424L29.7133 81.7994L16.827 94.7696L16.4768 95.122L16.827 95.4744L29.7133 108.445L30.068 108.802L30.4227 108.445ZM73.0227 22.3335L112.998 62.5693L105.112 70.5069L73.3773 38.5655L73.0226 38.2085L72.6679 38.5655L59.7815 51.5358L59.4314 51.8882L59.7815 52.2406L70.0437 62.5695L62.1578 70.5068L43.6594 51.888L73.0227 22.3335ZM76.0015 127.675L83.8871 119.738L115.622 151.68L115.977 152.037L116.331 151.68L129.218 138.709L129.568 138.357L129.218 138.005L118.956 127.676L126.842 119.738L145.341 138.356L115.977 167.911L76.0015 127.675ZM126.842 76.5037L158.577 108.445L158.932 108.802L159.287 108.445L172.173 95.4749L172.523 95.1225L172.173 94.7701L159.287 81.7999L158.932 81.4429L158.577 81.7999L148.32 92.1242L140.433 84.1866L158.932 65.5679L188.295 95.1223L158.932 124.677L118.956 84.441L126.842 76.5037ZM73.3773 151.679L83.6349 141.354L91.5211 149.292L73.0227 167.911L43.6594 138.356L83.6347 98.1201L91.521 106.058L59.7815 138.004L59.4314 138.356L59.7815 138.709L72.6679 151.679L73.0226 152.036L73.3773 151.679ZM105.368 92.12L97.4825 84.1828L129.222 52.2368L129.572 51.8844L129.222 51.5319L116.336 38.5617L115.981 38.2047L115.626 38.5617L105.369 48.8861L97.4826 40.9488L115.981 22.3297L145.344 51.8842L105.368 92.12ZM91.5208 62.8237L62.4101 92.1239L54.5242 84.1866L83.6349 54.8865L91.5208 62.8237ZM76.0017 84.4408L83.8876 76.5036L112.998 105.804L105.112 113.741L76.0017 84.4408ZM97.4786 127.421L126.589 98.1205L134.476 106.058L105.365 135.358L97.4786 127.421ZM94.669 30.6567L79.7922 15.683L94.669 0.709411L109.546 15.683L94.669 30.6567ZM94.6691 188.291L79.7923 173.317L94.6691 158.343L109.546 173.317L94.6691 188.291Z"/>
+      </svg>
+      <span>RITUAL</span>
+    </div>
+    <div class="nav-links">
+      <a href="#" class="active">Markets</a>
+      <a href="#" id="nav-leaderboard">Leaderboard</a>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- INTRO SCREEN (Hero Section)           -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="screen intro-screen" id="intro-screen">
+    <div class="hero-content">
+      <div class="live-badge">
+        <span class="pulse-dot"></span> LIVE ON RITUAL DISCORD
+      </div>
+      
+      <h1 class="hero-title"><em>Predict anything, on-discord.</em></h1>
+      
+      <p class="hero-subtitle">
+        Ritual Predict is a community prediction market. Connect your Discord, bet on outcomes, and climb the leaderboard. Every prediction is tracked and updated daily.
+      </p>
+
+      <div class="auth-section">
+        <input type="text" id="discord-username" class="username-input" placeholder="Enter Discord Username" autocomplete="off">
+        <div class="hero-buttons">
+          <button class="btn-primary" id="btn-start">Start Predicting</button>
+          <button class="btn-secondary" id="btn-browse">View Leaderboard</button>
+        </div>
+        <p class="error-msg" id="auth-error"></p>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num">8</span>
+          <span class="stat-label">Active Markets</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="stat-total-users">--</span>
+          <span class="stat-label">Total Predictors</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD MODAL -->
+  <div class="modal-overlay" id="leaderboard-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Top Predictors</h2>
+        <button class="btn-close" id="btn-close-leaderboard">&times;</button>
+      </div>
+      <div class="leaderboard-list" id="leaderboard-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- MAIN APP                              -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="app" id="main-app" style="opacity: 0; pointer-events: none;">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-brand">
+        <svg class="header-logo" viewBox="0 0 189 189" fill="currentColor" aria-label="Ritual">
+          <path d="M30.4227 108.445L40.6803 98.1203L48.5666 106.058L30.0682 124.677L0.70482 95.1222L30.0678 65.5677L70.0435 105.804L62.1576 113.741L30.4227 81.7994L30.068 81.4424L29.7133 81.7994L16.827 94.7696L16.4768 95.122L16.827 95.4744L29.7133 108.445L30.068 108.802L30.4227 108.445ZM73.0227 22.3335L112.998 62.5693L105.112 70.5069L73.3773 38.5655L73.0226 38.2085L72.6679 38.5655L59.7815 51.5358L59.4314 51.8882L59.7815 52.2406L70.0437 62.5695L62.1578 70.5068L43.6594 51.888L73.0227 22.3335ZM76.0015 127.675L83.8871 119.738L115.622 151.68L115.977 152.037L116.331 151.68L129.218 138.709L129.568 138.357L129.218 138.005L118.956 127.676L126.842 119.738L145.341 138.356L115.977 167.911L76.0015 127.675ZM126.842 76.5037L158.577 108.445L158.932 108.802L159.287 108.445L172.173 95.4749L172.523 95.1225L172.173 94.7701L159.287 81.7999L158.932 81.4429L158.577 81.7999L148.32 92.1242L140.433 84.1866L158.932 65.5679L188.295 95.1223L158.932 124.677L118.956 84.441L126.842 76.5037ZM73.3773 151.679L83.6349 141.354L91.5211 149.292L73.0227 167.911L43.6594 138.356L83.6347 98.1201L91.521 106.058L59.7815 138.004L59.4314 138.356L59.7815 138.709L72.6679 151.679L73.0226 152.036L73.3773 151.679ZM105.368 92.12L97.4825 84.1828L129.222 52.2368L129.572 51.8844L129.222 51.5319L116.336 38.5617L115.981 38.2047L115.626 38.5617L105.369 48.8861L97.4826 40.9488L115.981 22.3297L145.344 51.8842L105.368 92.12ZM91.5208 62.8237L62.4101 92.1239L54.5242 84.1866L83.6349 54.8865L91.5208 62.8237ZM76.0017 84.4408L83.8876 76.5036L112.998 105.804L105.112 113.741L76.0017 84.4408ZM97.4786 127.421L126.589 98.1205L134.476 106.058L105.365 135.358L97.4786 127.421ZM94.669 30.6567L79.7922 15.683L94.669 0.709411L109.546 15.683L94.669 30.6567ZM94.6691 188.291L79.7923 173.317L94.6691 158.343L109.546 173.317L94.6691 188.291Z"/>
+        </svg>
+        <span class="header-title">Predict</span>
+      </div>
+      <div class="header-counter">
+        <span id="counter-current">1</span> / <span id="counter-total">8</span>
+      </div>
+    </header>
+
+    <!-- Progress -->
+    <div class="progress-container">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-dots" id="progress-dots"></div>
+    </div>
+
+    <!-- Card Stack Area -->
+    <div class="card-arena" id="card-arena">
+      <div class="card-stack" id="card-stack">
+        <!-- Cards injected by JS -->
+      </div>
+      <div class="cards-empty" id="cards-empty">
+        <span style="font-size: 40px;">✨</span>
+        <span>All predictions made!</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="actions" id="actions">
+      <!-- NO Button -->
+      <button class="action-btn btn-no" id="btn-no" aria-label="No">
+        <span class="btn-text">NO</span>
+      </button>
+
+      <!-- SKIP Button -->
+      <button class="action-btn btn-skip" id="btn-skip" aria-label="Skip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/>
+        </svg>
+      </button>
+
+      <!-- YES Button -->
+      <button class="action-btn btn-yes" id="btn-yes" aria-label="Yes">
+        <span class="btn-text">YES</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- RESULTS SCREEN                        -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="screen results-screen hidden" id="results-screen">
+    <div class="results-header">
+      <div class="results-emoji">🔮</div>
+      <h2 class="results-title">Predictions Locked In</h2>
+      <p class="results-subtitle">Here's how you called this week's Discord action</p>
+    </div>
+
+    <div class="results-stats" id="results-stats">
+      <div class="stat-card">
+        <div class="stat-value yes" id="stat-yes">0</div>
+        <div class="stat-label">Bullish (Yes)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value no" id="stat-no">0</div>
+        <div class="stat-label">Bearish (No)</div>
+      </div>
+    </div>
+
+    <div class="results-list" id="results-list">
+      <!-- Populated by JS -->
+    </div>
+
+    <button class="btn-restart" id="btn-restart">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+      Predict Again
+    </button>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
