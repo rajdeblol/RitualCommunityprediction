@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/admin-resolve",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}

@@ -129,7 +129,7 @@ function init() {
 
 async function fetchTotalUsers() {
   try {
-    const res = await fetch('http://localhost:8765/api/leaderboard');
+    const res = await fetch('/api/leaderboard');
     const data = await res.json();
     if (data && Array.isArray(data)) {
       statTotalUsers.textContent = data.length;
@@ -367,7 +367,7 @@ function executeSwipe(card, direction) {
 
   // Save to DB (async, non-blocking)
   if (state.username && (direction === 'yes' || direction === 'no')) {
-    fetch('http://localhost:8765/api/predict', {
+    fetch('/api/predict', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -483,7 +483,7 @@ async function startGame() {
   authError.textContent = 'Connecting...';
 
   try {
-    const res = await fetch('http://localhost:8765/api/login', {
+    const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username })
@@ -513,7 +513,7 @@ async function openLeaderboard() {
   leaderboardList.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">Loading...</div>';
   
   try {
-    const res = await fetch('http://localhost:8765/api/leaderboard');
+    const res = await fetch('/api/leaderboard');
     const data = await res.json();
     
     if (data.length === 0) {
